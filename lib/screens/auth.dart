@@ -46,12 +46,28 @@ class _AuthScreenState extends State<AuthScreen> {
                             keyboardType: TextInputType.emailAddress,
                             autocorrect: false,
                             textCapitalization: TextCapitalization.none,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.trim().isEmpty ||
+                                  !value.contains('@')) {
+                                return 'Please enter a valid e-mail address.';
+                              }
+
+                              return null;
+                            },
                           ),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Password',
                             ),
                             obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.trim().length < 6) {
+                                return 'Password must be at least 6 characters.';
+                              }
+
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 12),
                           ElevatedButton(
