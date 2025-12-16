@@ -7,9 +7,13 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Chat',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        ),
       ),
-      body: Center(child: Text('Loged In')),
+      body: Center(child: Text('Logged In')),
     );
   }
 }
