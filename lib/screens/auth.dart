@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:chat_app/firebase_options.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -10,7 +12,18 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final _form = GlobalKey<FormState>();
   var _isLogin = true;
+  var _enteredEmail = '';
+  var _enteredPassword = '';
+
+  void _submit() {
+    final isValid = _form.currentState!.validate();
+
+    if (isValid) {
+      _form.currentState!.save();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +49,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Form(
+                      key: _form,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -55,6 +69,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                               return null;
                             },
+                            onSaved: (newValue) => _enteredEmail = newValue!,
                           ),
                           TextFormField(
                             decoration: const InputDecoration(
@@ -68,10 +83,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
                               return null;
                             },
+                            onSaved: (newValue) => _enteredPassword = newValue!,
                           ),
+
                           const SizedBox(height: 12),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _submit,
                             child: Text(_isLogin ? 'Log In' : 'Sign Up'),
                           ),
                           TextButton(
