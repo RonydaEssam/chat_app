@@ -23,6 +23,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredEmail = '';
   var _enteredPassword = '';
   File? _selectedImage;
+  var _isAuthenticating = false;
 
   void _submit() async {
     final isValid = _form.currentState!.validate();
@@ -34,6 +35,9 @@ class _AuthScreenState extends State<AuthScreen> {
     _form.currentState!.save();
 
     try {
+      setState(() {
+        _isAuthenticating = true;
+      });
       if (_isLogin) {
         final userCredentials = await _firebase.signInWithEmailAndPassword(
           email: _enteredEmail,
@@ -60,6 +64,9 @@ class _AuthScreenState extends State<AuthScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.message ?? 'Authentication Failed')),
       );
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
   }
 
@@ -96,6 +103,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               onPickImage: (pickedImage) =>
                                   _selectedImage = pickedImage,
                             ),
+
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'E-mail Address',
@@ -109,11 +117,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                   !value.contains('@')) {
                                 return 'Please enter a valid e-mail address.';
                               }
-
                               return null;
                             },
                             onSaved: (newValue) => _enteredEmail = newValue!,
                           ),
+
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Password',
@@ -123,30 +131,34 @@ class _AuthScreenState extends State<AuthScreen> {
                               if (value == null || value.trim().length < 6) {
                                 return 'Password must be at least 6 characters.';
                               }
-
                               return null;
                             },
                             onSaved: (newValue) => _enteredPassword = newValue!,
                           ),
 
                           const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: _submit,
-                            child: Text(_isLogin ? 'Log In' : 'Sign Up'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(
-                              _isLogin
-                                  ? 'Create an account'
-                                  : 'Already have an account.\nLog In',
-                              textAlign: TextAlign.center,
+                          if (_isAuthenticating)
+                            const CircularProgressIndicator(),
+                          if (!_isAuthenticating)
+                            ElevatedButton(
+                              onPressed: _submit,
+                              child: Text(_isLogin ? 'Log In' : 'Sign Up'),
                             ),
-                          ),
+
+                          if (!_isAuthenticating)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+                              child: Text(
+                                _isLogin
+                                    ? 'Create an account'
+                                    : 'Already have an account.\nLog In',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                         ],
                       ),
                     ),
