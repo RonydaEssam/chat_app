@@ -21,6 +21,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = true;
   var _enteredEmail = '';
   var _enteredPassword = '';
+  var _enteredUsername = '';
   File? _selectedImage;
   var _isAuthenticating = false;
 
@@ -60,7 +61,7 @@ class _AuthScreenState extends State<AuthScreen> {
             .collection('users')
             .doc(userCredentials.user!.uid)
             .set({
-              'username': '',
+              'username': _enteredUsername,
               'email': _enteredEmail,
               'imageurl': imageUrl,
             });
@@ -108,6 +109,23 @@ class _AuthScreenState extends State<AuthScreen> {
                             UserImagePicker(
                               onPickImage: (pickedImage) =>
                                   _selectedImage = pickedImage,
+                            ),
+
+                          if (!_isLogin)
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                labelText: 'Username',
+                              ),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.length < 4) {
+                                  return 'Please enter a valid username (min. 4 characters).';
+                                }
+                              },
+                              onSaved: (newValue) =>
+                                  _enteredUsername = newValue!,
                             ),
 
                           TextFormField(
