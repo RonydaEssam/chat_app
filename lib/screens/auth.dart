@@ -120,9 +120,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
-                                    value.length < 4) {
+                                    value.length < 3) {
                                   return 'Please enter a valid username (min. 4 characters).';
                                 }
+                                return null;
                               },
                               onSaved: (newValue) =>
                                   _enteredUsername = newValue!,
